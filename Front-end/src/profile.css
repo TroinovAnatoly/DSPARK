@@ -1,0 +1,100 @@
+#content_profile {
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 80vh;
+}
+
+#info_card {
+    background-color: rgb(64, 0, 72);
+    margin: 3%;
+    width: 30%;
+    height: 300px;
+    border-radius: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    flex-shrink: 0;
+}
+
+#info_card_name {
+    width: 80%;
+    height: 35%;
+    font-size: 34px;
+}
+
+#info_card_text {
+    width: 80%;
+    height: 40%;
+    font-size: 26px;
+    text-align: left;
+}
+
+#logout_button {
+    padding: 10px 20px;
+    background: rgb(34, 0, 38);
+    color: rgb(255, 14, 230);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#logout_button:hover {
+    color: rgb(211, 12, 191);
+}
+
+#purchase_history_card {
+    overflow: auto;
+    background-color: rgb(64, 0, 72);
+    margin: 3%;
+    width: 30%;
+    height: 600px;
+    border-radius: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    flex-shrink: 0;
+}
+
+#purchase_history_card_title {
+    font-size: 42px;
+}
+
+#operation_card {
+    background-color:rgb(34, 0, 38);
+    margin: 1%;
+    width: 95%;
+    height: 90px;
+    border-radius: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;  
+}
+
+#operation_card_text {
+    width: 50%;
+    font-size: 22px;
+}
+
+#operation_card_price {
+    width: 50%;
+    font-size: 22px;
+}
+
+@media (max-width: 1050px) {
+    #info_card {
+        width: 80%;
+    }
+    #purchase_history_card {
+        width: 80%;
+    }
+}

@@ -1,0 +1,60 @@
+#content_games {
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: space-between;
+    justify-content: center;
+    height: 80vh;
+}
+
+#game_card {
+    background-color: rgb(64, 0, 72);
+    margin: 5%;
+    width: 40%;
+    height: 650px;
+    border-radius: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#game_card_title {
+    width: 100%;
+    font-size: clamp(1.5rem, 2vw, 3rem);
+}
+
+#game_card_text {
+    width: 90%;
+    font-size: 18px;
+}
+
+#game_card_img {
+    width: 100%;
+    height: 65%;
+    border-radius: 0px;
+}
+
+#buy_button {
+    width: 250px;
+    background-color: rgb(34, 0, 38);
+    color: rgb(255, 14, 230);
+    font-size: clamp(1.25rem, 1vw, 1.5rem);
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 1%;
+}
+
+#buy_button:hover {
+    font-size: clamp(1.3rem, 1.15vw, 1.6rem);
+}
+
+@media (max-width: 1300px) {
+    #game_card {
+        width: 90%;
+        height: 850px;
+    }
+}
