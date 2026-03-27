@@ -20,7 +20,7 @@ const ordersSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-      // 📦 загрузка заказов
+      //  загрузка заказов
       .addCase(fetchOrders.pending, (state) => {
         state.loading = true;
         state.error = null;

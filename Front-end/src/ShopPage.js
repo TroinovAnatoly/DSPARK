@@ -1,33 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './shop.css';
-import { useGames } from './hooks/useGames';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { addGameToCart } from './api/games';
+
+import { useAppDispatch, useAppSelector } from './store/hooks/reduxHooks';
+import { fetchGames } from './store/thunks/gamesThunks';
+import { fetchCart, addGameToCart } from './store/thunks/cartThunks';
 
 function ShopPage() {
 
-  const queryClient = useQueryClient();
+  const dispatch = useAppDispatch();
 
-  const {
-    data: games = [],
-    isLoading,
-    error
-  } = useGames();
+  const { games, loading, error } = useAppSelector(state => state.games);
+  const cartLoading = useAppSelector(state => state.cart.loading);
 
-  // 🛒 добавление в корзину
-  const addMutation = useMutation({
-    mutationFn: addGameToCart,
+  useEffect(() => {
+    dispatch(fetchGames());
+    dispatch(fetchCart());
+  }, [dispatch]);
 
-    onSuccess: () => {
-      queryClient.invalidateQueries(["cart"]);
-    },
+  // добавление в корзину
+  const handleBuy = async (id) => {
+    const result = await dispatch(addGameToCart(id));
 
-    onError: (error) => {
-      alert(error.message);
+    if (addGameToCart.fulfilled.match(result)) {
+      dispatch(fetchCart());
     }
-  });
+  };
 
-  if (isLoading) return <p>Загрузка...</p>;
+  if (loading) return <p>Загрузка...</p>;
   if (error) return <p>Ошибка загрузки игр</p>;
 
   return (
@@ -54,8 +53,8 @@ function ShopPage() {
 
           <button
             id="buy_button"
-            onClick={() => addMutation.mutate(game.id)}
-            disabled={addMutation.isLoading}
+            onClick={() => handleBuy(game.id)}
+            disabled={cartLoading}
           >
             Купить: {game.price} ₽
           </button>

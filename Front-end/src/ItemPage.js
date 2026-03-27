@@ -17,18 +17,18 @@ function ItemPage() {
     (state) => state.cart.loading
   );
 
-  // 📥 загрузка предметов
+  // загрузка предметов
   useEffect(() => {
     dispatch(fetchItems());
   }, [dispatch]);
 
-  // 🛒 добавление в корзину
+  // добавление в корзину
   const handleAddToCart = async (id) => {
     try {
       await dispatch(addItemToCart(id)).unwrap();
 
       // обновляем корзину после покупки
-      dispatch(fetchItems()); // можно убрать, если не нужно
+      dispatch(fetchItems());
     } catch (error) {
       alert("Ошибка: " + error);
     }

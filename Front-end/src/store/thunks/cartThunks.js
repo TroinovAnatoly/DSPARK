@@ -21,7 +21,7 @@ export const addItemToCart = createAsyncThunk(
   async (itemId, thunkAPI) => {
     const token = localStorage.getItem("access");
 
-    const res = await fetch(`${"http://localhost:8000/api/cart/"}/cart/add/${itemId}/`, {
+    const res = await fetch(`${"http://localhost:8000/api/cart/"}add/${itemId}/`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -33,6 +33,23 @@ export const addItemToCart = createAsyncThunk(
     }
 
     return res.json();
+  }
+);
+
+export const addGameToCart = createAsyncThunk(
+  "cart/addGameToCart",
+  async (id, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`http://localhost:8000/api/cart/add/${id}/`, {
+        method: "POST",
+      });
+
+      if (!res.ok) throw new Error("Ошибка добавления в корзину");
+
+      return id;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
   }
 );
 
@@ -83,3 +100,4 @@ export const removeCartItem = createAsyncThunk(
     return id;
   }
 );
+

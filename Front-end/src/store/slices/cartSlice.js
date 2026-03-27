@@ -56,7 +56,7 @@ const cartSlice = createSlice({
             item.item?.id !== removedId
           );
         });
-      });
+      })
   },
 });
 
