@@ -1,86 +1,55 @@
-import React from "react";
-import { useCart } from "./hooks/useCart";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { removeCartItem, buyCart } from "./api/cart";
+import React, { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "./store/hooks/reduxHooks";
+
+import {
+  fetchCart,
+  removeCartItem,
+  buyCart,
+} from "./store/thunks/cartThunks";
 
 function CartPage() {
-  const queryClient = useQueryClient();
+  const dispatch = useAppDispatch();
+  const cart = useAppSelector((state) => state.cart);
 
-  const {
-    data: cart,
-    isLoading,
-    error,
-  } = useCart();
+  useEffect(() => {
+    dispatch(fetchCart());
+  }, [dispatch]);
 
-  // ❌ Удаление товара (с оптимистичным обновлением)
-  const removeMutation = useMutation({
-    mutationFn: removeCartItem,
+  function handleRemove(id) {
+    console.log("REMOVE CLICK", id);
+    dispatch(removeCartItem(id));
+  }
 
-    onMutate: async (id) => {
-      await queryClient.cancelQueries(["cart"]);
+  function handleBuy() {
+    dispatch(buyCart());
+  }
 
-      const prevCart = queryClient.getQueryData(["cart"]);
-
-      queryClient.setQueryData(["cart"], (old) => ({
-        ...old,
-        items: old.items.filter((i) => i.id !== id),
-      }));
-
-      return { prevCart };
-    },
-
-    onError: (err, id, context) => {
-      queryClient.setQueryData(["cart"], context.prevCart);
-    },
-
-    onSettled: () => {
-      queryClient.invalidateQueries(["cart"]);
-    },
-  });
-
-  // 🛒 Покупка
-  const buyMutation = useMutation({
-    mutationFn: buyCart,
-
-    onSuccess: () => {
-      alert("✅ Покупка сохранена!");
-      queryClient.invalidateQueries(["cart"]);
-    },
-
-    onError: (error) => {
-      alert("❌ Ошибка: " + error.message);
-    },
-  });
-
-  if (isLoading) return <p>Загрузка...</p>;
-  if (error) return <p>Ошибка загрузки корзины</p>;
+  if (!cart) return <p>Загрузка...</p>;
 
   return (
     <div id="content">
       <h2>Корзина</h2>
 
-      {cart?.items?.length === 0 && <p>Корзина пуста</p>}
+      {(!cart.items || cart.items.length === 0) && (
+        <p>Корзина пуста</p>
+      )}
 
-      {cart?.items?.map((item) => (
+      {cart.items?.map((item) => (
         <div key={item.id}>
           <p>
             {item.game?.title || item.item?.title} —{" "}
             {item.game?.price || item.item?.price} ₽
           </p>
 
-          <button onClick={() => removeMutation.mutate(item.id)}>
+          <button onClick={() => handleRemove(item.id)}>
             Удалить
           </button>
         </div>
       ))}
 
-      <h3>Итого: {cart?.total} ₽</h3>
+      <h3>Итого: {cart?.total ?? 0} ₽</h3>
 
-      <button
-        id="buy_button"
-        onClick={() => buyMutation.mutate()}
-        disabled={buyMutation.isLoading}
-      >
+      <button onClick={handleBuy}>
         Купить
       </button>
     </div>

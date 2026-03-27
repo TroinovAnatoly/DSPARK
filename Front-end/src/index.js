@@ -17,6 +17,8 @@ import ProfilePage from './ProfilePage.js';
 import RegisterPage from './register.js';
 import LoginPage from './login.js';
 import CartPage from './CartPage.js';
+import { Provider } from "react-redux";
+import { store } from "./store/store";
 
 function App() {
   return(
@@ -44,9 +46,11 @@ function App() {
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <QueryClientProvider client={queryClient}>
-    <App />
-  </QueryClientProvider>
+  <Provider store={store}>
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function

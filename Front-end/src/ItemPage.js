@@ -1,34 +1,40 @@
-import React from 'react';
-import './item.css';
-import { useItems } from './hooks/useItems';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { addItemToCart } from './api/items';
+import React, { useEffect } from "react";
+import "./item.css";
+
+import { useAppDispatch, useAppSelector } from "./store/hooks/reduxHooks";
+
+import { fetchItems } from "./store/thunks/itemsThunks";
+import { addItemToCart } from "./store/thunks/cartThunks";
 
 function ItemPage() {
+  const dispatch = useAppDispatch();
 
-  const queryClient = useQueryClient();
+  const { items, loading, error } = useAppSelector(
+    (state) => state.items
+  );
 
-  const {
-    data: items = [],
-    isLoading,
-    error
-  } = useItems();
+  const cartLoading = useAppSelector(
+    (state) => state.cart.loading
+  );
 
-  // 🛒 Добавление в корзину
-  const addMutation = useMutation({
-    mutationFn: addItemToCart,
+  // 📥 загрузка предметов
+  useEffect(() => {
+    dispatch(fetchItems());
+  }, [dispatch]);
 
-    onSuccess: () => {
-      // обновим корзину
-      queryClient.invalidateQueries(["cart"]);
-    },
+  // 🛒 добавление в корзину
+  const handleAddToCart = async (id) => {
+    try {
+      await dispatch(addItemToCart(id)).unwrap();
 
-    onError: (error) => {
-      alert(error.message);
+      // обновляем корзину после покупки
+      dispatch(fetchItems()); // можно убрать, если не нужно
+    } catch (error) {
+      alert("Ошибка: " + error);
     }
-  });
+  };
 
-  if (isLoading) return <p>Загрузка...</p>;
+  if (loading) return <p>Загрузка...</p>;
   if (error) return <p>Ошибка загрузки предметов</p>;
 
   return (
@@ -41,7 +47,7 @@ function ItemPage() {
         </div>
       )}
 
-      {items.map(item => (
+      {items.map((item) => (
         <div id="item_card" key={item.id}>
           <p id="item_card_title">{item.title}</p>
 
@@ -52,12 +58,14 @@ function ItemPage() {
           />
 
           <p id="item_card_text">{item.description}</p>
-          <p id="item_card_rarity">Редкость: {item.rarity}</p>
+          <p id="item_card_rarity">
+            Редкость: {item.rarity}
+          </p>
 
           <button
             id="buy_button"
-            onClick={() => addMutation.mutate(item.id)}
-            disabled={addMutation.isLoading}
+            onClick={() => handleAddToCart(item.id)}
+            disabled={cartLoading}
           >
             Купить: {item.price} ₽
           </button>

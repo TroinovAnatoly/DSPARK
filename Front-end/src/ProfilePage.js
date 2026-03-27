@@ -1,73 +1,112 @@
-import React from 'react';
-import './profile.css';
-import Image from './phonk_wallpaper.jpg';
+import React, { useEffect } from "react";
+import "./profile.css";
 import { useNavigate } from "react-router-dom";
-import { useProfile } from './hooks/useProfile';
-import { useOrders } from './hooks/useOrders';
+
+import { useAppDispatch, useAppSelector } from "./store/hooks/reduxHooks";
+
+import { fetchUser } from "./store/thunks/authThunks";
+import { fetchOrders } from "./store/thunks/ordersThunks";
+import { logout } from "./store/slices/authSlice";
 
 function ProfilePage() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
+  // данные пользователя
   const {
-    data: profile,
-    isLoading: profileLoading,
+    user,
+    loading: profileLoading,
     error: profileError,
-  } = useProfile();
+  } = useAppSelector((state) => state.auth);
 
+  // заказы
   const {
-    data: orders = [],
-    isLoading: ordersLoading,
+    orders,
+    loading: ordersLoading,
     error: ordersError,
-  } = useOrders();
+  } = useAppSelector((state) => state.orders);
 
-  function logout() {
-    localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
+  // загрузка данных
+  useEffect(() => {
+    dispatch(fetchUser());
+    dispatch(fetchOrders());
+  }, [dispatch]);
+
+  // logout
+  function handleLogout() {
+    dispatch(logout());
     navigate("/login");
   }
 
-  // 🔄 loading состояние
+  // loading
   if (profileLoading || ordersLoading) {
     return <p>Загрузка...</p>;
   }
 
-  // ❌ ошибка
+  // error
   if (profileError || ordersError) {
     return <p>Ошибка загрузки данных</p>;
   }
 
   return (
     <div id="content_profile">
-      <div id="info_card">
-        <p id="info_card_name">Информация о пользователе</p>
 
-        <p id="info_card_text">
-          {profile ? `User: ${profile.username}` : "Нету данных..."} <br />
-          {profile ? `Имя: ${profile.first_name}` : "Нету данных..."} <br />
-          {profile ? `Фамилия: ${profile.last_name}` : "Нету данных..."}
+      {/* 👤 USER INFO */}
+      <div id="info_card">
+        <p id="info_card_name">
+          Информация о пользователе
         </p>
 
-        <button id="logout_button" onClick={logout}>
+        <p id="info_card_text">
+          {user
+            ? `User: ${user.username}`
+            : "Нету данных..."}{" "}
+          <br />
+
+          {user
+            ? `Имя: ${user.first_name}`
+            : "Нету данных..."}{" "}
+          <br />
+
+          {user
+            ? `Фамилия: ${user.last_name}`
+            : "Нету данных..."}
+        </p>
+
+        <button
+          id="logout_button"
+          onClick={handleLogout}
+        >
           Выйти из аккаунта
         </button>
       </div>
 
+      {/* 📦 ORDERS */}
       <div id="purchase_history_card">
-        <p id="purchase_history_card_title">История покупок</p>
+        <p id="purchase_history_card_title">
+          История покупок
+        </p>
 
-        {orders.length === 0 && <p>Покупок пока нет</p>}
+        {orders.length === 0 && (
+          <p>Покупок пока нет</p>
+        )}
 
         {orders.map((order, index) => (
-          <div id="operation_card" key={order.id}>
+          <div
+            id="operation_card"
+            key={order.id}
+          >
             <p id="operation_card_text">
               Покупка №{index + 1}
             </p>
+
             <p id="operation_card_price">
               Цена: {order.total_price} ₽
             </p>
           </div>
         ))}
       </div>
+
     </div>
   );
 }
