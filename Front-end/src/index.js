@@ -1,19 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./queryClient";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BrowserRouter, Routes, Route} from "react-router-dom";
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import Header from './header.js';
 import Footer from './footer.js';
-import MainPage from './main.js';
-import NewsPage from './news.js';
-import ShopPage from './shop.js';
-import ItemPage from './item.js';
+import MainPage from './MainPage.js';
+import NewsPage from './NewsPage.js';
+import ShopPage from './ShopPage.js';
+import ItemPage from './ItemPage.js';
 import CompanyPage from './company.js';
-import ProfilePage from './profile.js';
+import ProfilePage from './ProfilePage.js';
 import RegisterPage from './register.js';
 import LoginPage from './login.js';
-import CartPage from './Cart.js';
+import CartPage from './CartPage.js';
 
 function App() {
   return(
@@ -33,13 +36,18 @@ function App() {
         </Routes>
         <Footer />
       </BrowserRouter>
+      <ReactQueryDevtools initialIsOpen={false} />
   </div>
   )
 }
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+root.render(
+  <QueryClientProvider client={queryClient}>
+    <App />
+  </QueryClientProvider>
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

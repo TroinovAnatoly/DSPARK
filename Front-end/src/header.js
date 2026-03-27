@@ -1,42 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Image from './phonk_wallpaper.jpg';
 import { Link } from "react-router-dom";
+import { useProfile } from "./hooks/useProfile";
 
 function Header() {
 
-    const [username, setUsername] = useState(null);
+    const {
+        data: profile,
+        isLoading,
+        error
+    } = useProfile();
 
-    useEffect(() => {
-        async function fetchUser() {
-            const token = localStorage.getItem("access");
+    // если нет токена — сразу "Войти"
+    const token = localStorage.getItem("access");
 
-            if (!token) {
-                setUsername(<Link to="/login">Войти</Link>);
-                return;
-            }
+    let usernameContent;
 
-            try {
-                const response = await fetch("http://localhost:8000/api/user/", {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    setUsername(data.username);
-                } else {
-                    setUsername(<Link to="/login">Войти</Link>);
-                }
-            } catch (error) {
-                console.error("Ошибка получения пользователя:", error);
-                setUsername(<Link to="/login">Войти</Link>);
-            }
-        }
-
-        fetchUser();
-    }, []);
+    if (!token) {
+        usernameContent = <Link to="/login">Войти</Link>;
+    } else if (isLoading) {
+        usernameContent = "Загрузка...";
+    } else if (error) {
+        usernameContent = <Link to="/login">Войти</Link>;
+    } else {
+        usernameContent = profile?.username;
+    }
 
     return (
         <header>
@@ -47,7 +35,7 @@ function Header() {
             <Link to="/profile" id="profile_link">
                 <div id="profile">
                     <p id="profile_name">
-                        {username ? username : "Войти"}
+                        {usernameContent}
                     </p>
                     <img src={Image} alt="Аватар" id="profile_image" />
                 </div>
