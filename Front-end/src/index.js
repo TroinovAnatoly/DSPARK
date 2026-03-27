@@ -1,24 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "./queryClient";
+import { queryClient } from "./app/providers/queryClient.js";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BrowserRouter, Routes, Route} from "react-router-dom";
-import './index.css';
-import reportWebVitals from './reportWebVitals';
-import Header from './header.js';
-import Footer from './footer.js';
-import MainPage from './MainPage.js';
-import NewsPage from './NewsPage.js';
-import ShopPage from './ShopPage.js';
-import ItemPage from './ItemPage.js';
-import CompanyPage from './company.js';
-import ProfilePage from './ProfilePage.js';
-import RegisterPage from './register.js';
-import LoginPage from './login.js';
-import CartPage from './CartPage.js';
+import './styles/index.css';
+import reportWebVitals from './app/providers/reportWebVitals.js';
+import Header from './widgets/header.js';
+import Footer from './widgets/footer.js';
+import MainPage from './pages/MainPage.js';
+import NewsPage from './pages/NewsPage.js';
+import ShopPage from './pages/ShopPage.js';
+import ItemPage from './pages/ItemPage.js';
+import CompanyPage from './pages/CompanyPage.js';
+import ProfilePage from './pages/ProfilePage.js';
+import RegisterPage from './pages/RegisterPage.js';
+import LoginPage from './pages/LoginPage.js';
+import CartPage from './pages/CartPage.js';
 import { Provider } from "react-redux";
-import { store } from "./store/store";
+import { store } from "./app/store/store.js";
 
 function App() {
   return(
